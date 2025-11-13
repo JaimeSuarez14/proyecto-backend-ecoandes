@@ -41,6 +41,21 @@ public class UsuarioService implements UserDetailsService {
       throw new UsuarioNoCreadoException("El nombre de usuario ya está en uso por otro usuario.");
     }
 
+    String nuevaPassword = usuarioActualizado.getPassword();
+
+    if (esPasswordHasheada(nuevaPassword)) {
+        // Si ya está hasheada, verificar si es igual a la actual
+        if (!nuevaPassword.equals(usuarioExistente.getPassword())) {
+            //usuarioExistente.setPassword(nuevaPassword); // Reemplazar directamente
+        }
+    } else {
+        // Si está en texto plano, verificar si coincide con la actual
+        if (!passwordEncoder.matches(nuevaPassword, usuarioExistente.getPassword())) {
+            usuarioExistente.setPassword(passwordEncoder.encode(nuevaPassword));
+        }
+    }
+
+
     // Actualizar todos los campos relevantes
     usuarioExistente.setUsername(usuarioActualizado.getUsername().trim());
     usuarioExistente.setEmail(usuarioActualizado.getEmail().trim());
@@ -117,4 +132,12 @@ public class UsuarioService implements UserDetailsService {
     usuarioRepository.save(usuario);
     return "Contraseña actualizada con exito";
   }
+
+  @SuppressWarnings("null")
+  public boolean esPasswordHasheada(String password) {
+    return password != null &&
+        password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$") &&
+            password.length() == 60;
+  }
+
 }
