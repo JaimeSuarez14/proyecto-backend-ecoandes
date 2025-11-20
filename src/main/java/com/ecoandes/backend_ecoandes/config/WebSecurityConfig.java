@@ -53,7 +53,7 @@ public class WebSecurityConfig {
     http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilita CORS
         .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar el ejemplo
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/login", "/auth/**").permitAll() // Permitir acceso a login y registro
+            .requestMatchers("/login", "/auth/**", "/api/consulta/**", "/api/productos/**").permitAll() // Permitir acceso a login y registro
             .anyRequest().authenticated() // Requerir autenticación para cualquier otra solicitud
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
